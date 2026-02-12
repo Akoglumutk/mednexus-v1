@@ -1,0 +1,713 @@
+@import "tailwindcss";
+
+@theme {
+  /* MedNexus Dark Academia Palette */
+  --color-background: #050505;
+  --color-paper: #121212;
+  --color-gold: #D4AF37;
+  --color-crimson: #991B1B;
+  --color-ember: #F59E0B;
+  --color-med-text: #E5E7EB;
+  --color-med-muted: #6B7280;
+  --color-green: #38c925;
+  --color-red: #f00f0f;
+  --color-blue: oklch(62.3% 0.214 259.815);
+
+  /* Custom Background Gradients */
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+
+  /* Typography */
+  --font-serif: "Crimson Text", "Georgia", serif;
+}
+
+/* Base Styles (Opsiyonel) */
+@layer base {
+  body {
+    @apply bg-background text-med-text antialiased;
+  }
+}
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Scriptorium Word-Page Simulation */
+.editor-page-container {
+  /* A4 Oranları ve Tasarımı */
+  background: transparent;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+.prose table {
+  @apply border-collapse border border-slate-700 w-full my-4 text-sm;
+}
+
+.prose th, .prose td {
+  @apply border border-slate-800 p-2 bg-paper/30;
+}
+
+/* High Yield Highlight Rengi */
+mark {
+  @apply bg-gold/30 text-gold px-1 rounded-sm border-b border-gold;
+}
+
+/* Sayfa kesilmesi önleyici (PDF çıktı alırken işe yarar) */
+@media print {
+  .prose p, .prose h1, .prose h2, .prose img {
+    break-inside: avoid;
+  }
+}
+
+/* app/globals.css veya ilgili layout CSS */
+.main-content-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar sabit kalırken içeriği sağa iter */
+.sidebar-vessel {
+  width: 16rem; /* 64 birim */
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 50;
+}
+
+.page-vessel {
+  flex: 1;
+  margin-left: 16rem; /* Sidebar genişliği kadar boşluk bırakır */
+  width: calc(100% - 16rem);
+}
+
+/* Editor içindeki sayfa yapısı */
+.editor-page-container {
+  width: 210mm; /* A4 Genişlik */
+  min-height: 297mm; /* A4 Yükseklik */
+  margin: 2rem auto;
+  background: var(--color-paper);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  /* PDF'e basıldığında sayfa kesilmesini engeller */
+  page-break-after: always;
+}
+
+/* Editör içindeki listelerin görünür olması için */
+#editor-area ul {
+  list-style-type: disc !important;
+  padding-left: 40px !important;
+  margin: 10px 0 !important;
+}
+
+#editor-area ol {
+  list-style-type: decimal !important;
+  padding-left: 40px !important;
+  margin: 10px 0 !important;
+}
+
+#editor-area li {
+  display: list-item !important;
+}
+
+/* Scriptorium Editor Styling */
+#editor-area h1 { font-size: 24pt !important; font-weight: bold !important; margin-bottom: 0.5em !important; display: block !important; }
+#editor-area h2 { font-size: 18pt !important; font-weight: bold !important; margin-top: 1em !important; display: block !important; }
+#editor-area h3 { font-size: 14pt !important; font-weight: bold !important; margin-top: 1em !important; display: block !important; }
+
+
+/* Sayfa Ayrımı ve A4 Simülasyonu */
+.editor-paper-vessel {
+  page-break-after: always;
+  /* Word benzeri sayfa sonu çizgisi simülasyonu (Opsiyonel) */
+  background-image: linear-gradient(to bottom, transparent 99%, #f1f1f1 1%);
+  background-size: 100% 297mm;
+}
+
+/* Typography Reset */
+.editor-paper-vessel h1 { font-size: 24pt !important; margin-bottom: 0.8em !important; font-weight: 800 !important; color: #000 !important; }
+.editor-paper-vessel h2 { font-size: 18pt !important; margin-top: 1.2em !important; font-weight: 700 !important; color: #000 !important; }
+.editor-paper-vessel h3 { font-size: 14pt !important; margin-top: 1em !important; font-weight: 600 !important; color: #000 !important; }
+.editor-paper-vessel p { margin-bottom: 1em !important; }
+
+/* --- SCRIPTORIUM EDITOR ENGINE --- */
+
+
+/* 2. Başlıkların Görünürlüğü (Tailwind Reset Override) */
+#editor-area h1 { 
+    display: block !important; 
+    font-size: 24pt !important; 
+    font-weight: 800 !important; 
+    margin-bottom: 0.5em !important; 
+    color: #000 !important;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+#editor-area h2 { 
+    display: block !important; 
+    font-size: 18pt !important; 
+    font-weight: 700 !important; 
+    margin-top: 1em !important; 
+    margin-bottom: 0.5em !important;
+    color: #333 !important; 
+}
+
+#editor-area h3 { 
+    display: block !important; 
+    font-size: 14pt !important; 
+    font-weight: 600 !important; 
+    margin-top: 1em !important; 
+    color: #555 !important; 
+}
+
+/* 3. Listelerin Görünürlüğü */
+#editor-area ul { 
+    display: block !important;
+    list-style-type: disc !important; 
+    margin-left: 1.5rem !important; 
+    padding-left: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+#editor-area ol { 
+    display: block !important;
+    list-style-type: decimal !important; 
+    margin-left: 1.5rem !important; 
+    padding-left: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+#editor-area li { 
+    display: list-item !important;
+    margin-bottom: 0.25rem;
+}
+
+/* 4. PDF Page Break Logic */
+.pdf-page-break {
+    page-break-after: always;
+}
+
+/* Görseli GÖRÜNÜR kılmaya zorlayan kod */
+.med-img {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* --- MEDNEXUS EDITOR ENGINE --- */
+
+/* 1. Görsel Motoru: Tailwind Reset'i Ezme */
+#editor-area img, .med-img {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 1.5rem auto !important;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* 2. Liste Motoru: Görünürlük Zorlama */
+#editor-area ul {
+    display: block !important;
+    list-style-type: disc !important;
+    margin-left: 2rem !important;
+    padding-left: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+#editor-area ol {
+    display: block !important;
+    list-style-type: decimal !important;
+    margin-left: 2rem !important;
+    padding-left: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+#editor-area li {
+    display: list-item !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* 3. Tipografi Hiyerarşisi */
+#editor-area h1 { font-size: 24pt !important; font-weight: 800 !important; border-bottom: 2px solid #eee; margin-bottom: 0.5em !important; display: block !important; }
+#editor-area h2 { font-size: 18pt !important; font-weight: 700 !important; margin-top: 1em !important; display: block !important; }
+#editor-area h3 { font-size: 14pt !important; font-weight: 600 !important; margin-top: 1em !important; display: block !important; }
+
+/* 4. Oracle Cevap Bloğu */
+.oracle-response {
+    background-color: #f9f9f9;
+    border-left: 4px solid #D4AF37;
+    padding: 15px;
+    margin: 20px 0;
+    font-style: italic;
+    color: #333;
+}
+
+/* app/globals.css - En alt satır */
+
+/* GÖRSEL GÖRÜNÜRLÜK ZORLAMASI */
+#editor-area figure.med-image-wrapper {
+  display: block !important;
+  width: 100% !important;
+  margin: 1.5rem 0 !important;
+  pointer-events: none; /* Resme tıklanıp editörün bozulmasını engeller */
+}
+
+#editor-area img {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-width: 100% !important;
+  height: auto !important;
+  /* Bazen background-color resmin üstüne biner, bunu engelle: */
+  background-color: transparent !important; 
+  z-index: 10 !important;
+  position: relative !important;
+}
+
+/* PDF Çıktısı İçin */
+@media print {
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+}
+
+/* --- NOT GRUBU KURALLARI ENTEGRASYONU  --- */
+
+#editor-area {
+    font-family: 'Arial', sans-serif !important; /*  */
+}
+
+/* Ana Başlık: 19 Puan, Kalın  */
+#editor-area h1 { 
+    font-size: 19pt !important; 
+    font-weight: bold !important; 
+    color: #000000 !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+    border-bottom: 2px solid #eee;
+}
+
+/* Alt Başlık: 16 Puan, Kalın  */
+#editor-area h2 { 
+    font-size: 16pt !important; 
+    font-weight: bold !important; 
+    color: #000000 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+
+/* Normal Metin: 13 Puan  */
+#editor-area p, #editor-area li, #editor-area div { 
+    font-size: 13pt !important; 
+    color: #000000 !important; /* Normal yazılar siyah  */
+    line-height: 1.5 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Renk Sınıfları (Butonlar ve Oracle için) */
+.med-exam { color: #FF0000 !important; font-weight: bold !important; } /* Sınav  */
+.med-teacher { color: #0000FF !important; font-weight: bold !important; } /* Hoca  */
+.med-extra { color: #008000 !important; } /* Ekstra Bilgi  */
+
+/* Oracle Cevap Bloğu */
+.oracle-response {
+    background-color: #fcfcfc;
+    border-left: 5px solid #000000;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+/* --- SAYFA KESME VE WORD GÖRÜNÜMÜ --- */
+
+/* Editörde "Sayfa Kesme" çizgisi nasıl görünür? */
+.page-break-marker {
+  border-top: 2px dashed #ff0000;
+  color: #ff0000;
+  font-size: 10px;
+  text-align: center;
+  margin: 20px 0;
+  padding-top: 5px;
+  user-select: none; /* Seçilemez */
+  opacity: 0.5;
+}
+
+/* Editördeki Resim Kapsayıcısı */
+.med-image-wrapper {
+  display: block !important;
+  text-align: center;
+  margin: 15px 0;
+}
+
+/* PDF İçin Özel Kurallar (Print Mode) */
+@media print {
+  .page-break-marker { 
+    display: block; 
+    page-break-after: always !important; /* Burası kritik */
+    border: none; 
+    color: transparent; 
+    height: 0; 
+  }
+}
+
+/* --- SCRIPTORIUM WORD ENGINE --- */
+
+/* 1. Görsel Motoru */
+.editor-canvas img, .med-img {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 1.5rem auto !important;
+    border-radius: 4px;
+}
+
+/* 2. Liste Motoru (PDF Fix için önemli) */
+.editor-canvas ul {
+    display: block !important;
+    list-style-type: disc !important;
+    margin-left: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.editor-canvas ol {
+    display: block !important;
+    list-style-type: decimal !important;
+    margin-left: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.editor-canvas li {
+    display: list-item !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* 3. Manuel Sayfa Sonu Çizgisi (Editörde) */
+.manual-page-break {
+    border-top: 2px dashed #ff0000;
+    color: #ff0000;
+    font-size: 10px;
+    text-align: center;
+    margin: 30px 0;
+    padding-top: 5px;
+    opacity: 0.5;
+    user-select: none;
+}
+.manual-page-break::after {
+    content: "--- PAGE BREAK (PDF) ---";
+}
+
+/* 4. Başlıklar */
+.editor-canvas h1 { font-size: 24pt; font-weight: bold; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+.editor-canvas h2 { font-size: 18pt; font-weight: bold; margin-top: 20px; }
+
+/* --- TRIALS EXAM ENGINE --- */
+
+/* Soru Bloğu Tasarımı */
+.question-block {
+    border: 1px solid #333;
+    background-color: #fcfcfc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.question-block h3 {
+    color: #991B1B !important; /* Crimson */
+    font-size: 14pt !important;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 10px !important;
+}
+
+.q-options {
+    list-style-type: none !important;
+    padding-left: 0 !important;
+}
+
+.q-options li {
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+.q-options li:hover {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+/* CEVAP ANAHTARI GİZLEME (Active Recall) */
+.q-answer {
+    margin-top: 15px;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #555;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+}
+
+.blur-answer {
+    background-color: #000;
+    color: #000 !important;
+    border-radius: 3px;
+    padding: 0 5px;
+    filter: blur(4px); /* Bulanıklaştır */
+    transition: all 0.3s ease;
+    cursor: help;
+    user-select: none;
+}
+
+.blur-answer:hover {
+    background-color: transparent;
+    color: #991B1B !important; /* Üzerine gelince Crimson */
+    filter: none; /* Netleştir */
+}
+/* --- OBSERVATORY ATLAS ENGINE --- */
+
+.atlas-figure {
+    margin: 20px 0;
+    text-align: center;
+    background: #111;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 8px;
+}
+
+.atlas-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* OCCLUSION BOX (Siyah Sansür Kutusu) */
+.occlusion-box {
+    background-color: #000;
+    color: #000 !important; /* Yazıyı gizle */
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 4px;
+    transition: all 0.3s ease;
+    user-select: none;
+    box-shadow: 0 0 0 1px #333; /* Hafif çerçeve */
+}
+
+.occlusion-box.revealed {
+    background-color: transparent; /* Arka planı kaldır */
+    color: #fff !important; /* Yazıyı göster (Eğer metin ise) */
+    /* Eğer resim üzerindeyse bu sadece basit bir overlay'dir */
+    box-shadow: 0 0 0 2px #4ade80; /* Açılınca yeşil çerçeve */
+}
+
+/* Observatory'de görsellerin üzerine geldiğinde pointer değişsin */
+.occlusion-mode .atlas-img {
+    cursor: crosshair;
+}
+
+/* --- OBSERVATORY DARK ENGINE --- */
+
+.atlas-title {
+    color: #a855f7 !important; /* Purple-500 */
+    font-size: 22pt;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.atlas-figure {
+    margin: 20px 0;
+    text-align: center;
+    background: #000;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+.atlas-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    cursor: crosshair; /* Occlusion için hedef göstergesi */
+}
+
+/* SANSÜR KUTUSU (OCCLUSION MASK) */
+.occlusion-mask {
+    background-color: #000; /* Tam Siyah */
+    color: #000 !important; /* Yazıyı gizle */
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px 4px;
+    transition: all 0.2s ease;
+    user-select: none;
+    box-shadow: 0 0 0 1px #333;
+    text-shadow: none !important;
+}
+
+.occlusion-mask.revealed {
+    background-color: rgba(168, 85, 247, 0.2); /* Mor transparan */
+    color: #fff !important; /* Yazıyı göster */
+    box-shadow: 0 0 0 1px #a855f7;
+    text-decoration: none;
+}
+
+/* Editor Modundayken (Occlusion kapalıyken) normal görünüm */
+.atlas-canvas:not(:has(.occlusion-mask)) .atlas-img {
+    cursor: default;
+}
+
+/* --- OBSERVATORY ATLAS ENGINE --- */
+
+.atlas-title {
+    color: #a855f7 !important;
+    font-size: 24pt;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+/* Kapsayıcı: Resim ve Kutuları bir arada tutar */
+.atlas-container {
+    position: relative; /* Kutular buna göre konumlanır */
+    display: inline-block;
+    margin: 20px auto;
+    border: 1px solid #333;
+    border-radius: 4px;
+    overflow: hidden; /* Dışarı taşmayı önle */
+}
+
+.atlas-container:hover {
+    border-color: #555;
+}
+
+.atlas-img {
+    display: block;
+    max-width: 100%;
+    pointer-events: none; /* Tıklamayı container'a geçirir */
+}
+
+/* SİYAH BANT (OCCLUSION BOX) */
+.occlusion-box {
+    position: absolute;
+    background-color: #000; /* Simsiyah */
+    border: 1px solid #ff0000; /* Geliştirirken görmek için kırmızı çerçeve, sonra kaldırabilirsin */
+    width: 60px; /* Varsayılan genişlik */
+    height: 30px; /* Varsayılan yükseklik */
+    transform: translate(-50%, -50%); /* Tıklanan yeri merkez al */
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Tıklayınca Açılan Durum */
+.occlusion-box.revealed {
+    background-color: rgba(168, 85, 247, 0.3); /* Mor transparan */
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+/* Editör Modunda İmleç */
+.occlusion-mode .atlas-container {
+    cursor: crosshair;
+}
+
+/* --- OBSERVATORY ENGINE UPDATE --- */
+
+.atlas-container {
+    position: relative;
+    display: inline-block;
+    margin: 20px auto;
+    border: 1px solid #333;
+    overflow: hidden; /* Dışarı taşmayı kesinlikle engelle */
+    user-select: none; /* Çizerken resmin seçilmesini engelle */
+}
+
+/* SANSÜR KUTUSU (RESIZABLE) */
+.occlusion-box {
+    position: absolute;
+    background-color: #000;
+    /* transform: translate(-50%, -50%);  <-- BUNU SİL */
+    border: 1px solid #ff0000; /* Çizerken kırmızı çerçeve */
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    /* Genişlik ve yükseklik inline style olarak JS'den gelecek */
+}
+
+.occlusion-box.revealed {
+    background-color: rgba(168, 85, 247, 0.2); 
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+/* Çizim yaparken imleç */
+.occlusion-mode .atlas-container {
+    cursor: crosshair;
+}
+
+/* app/globals.css */
+.occlusion-box {
+    position: absolute;
+    background-color: #000;
+    /* transform: translate(-50%, -50%);  <--- BU SATIRI SİL YOKSA KUTU KAYAR */
+    border: 1px solid #ff0000;
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.med-occlusion {
+  background: #1a1a1a;
+  border: 1.5px solid #ef4444;
+  z-index: 40;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  cursor: crosshair;
+}
+.med-occlusion.revealed {
+  opacity: 0.15;
+  border-style: dashed;
+}
+.med-occlusion:hover {
+  transform: scale(1.02);
+  border-color: #f87171;
+}
+
+.med-postit-note {
+  background: #d4af37;
+  color: #000;
+  padding: 6px 10px;
+  font-family: 'Georgia', serif; /* Akademik dokunuş */
+  font-size: 12px;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+  border-left: 4px solid #b8860b;
+  z-index: 50;
+  min-width: 80px;
+}
