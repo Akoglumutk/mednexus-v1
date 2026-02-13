@@ -216,7 +216,63 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
   const insertQuestion = () => applyStyle('insertHTML',`<div class="question-block border border-red-900/30 p-4 my-4 bg-red-900/5 rounded"><h4 class="text-red-400 font-bold mb-2">SORU:</h4><p>...</p></div><p><br/></p>`);
   const handleUndo = () => { if(!editorRef.current)return; const els=editorRef.current.querySelectorAll('.occlusion-box,.med-postit-note,.med-arrow-wrapper'); if(els.length>0){els[els.length-1].remove();saveToLocal();} };
   const saveToCloud = async () => { if(!editorRef.current||!id)return; await supabase.from('notes').update({title:noteTitle,content:editorRef.current.innerHTML,updated_at:new Date().toISOString()}).eq('id',id); setLastSaved(new Date()); };
-  const handleDownloadPDF = async () => { if(!editorRef.current)return; setIsExporting(true); try{const html2pdf=(await import('html2pdf.js')).default; const w=document.createElement('div'); const d=mode==='OBSERVATORY'; w.style.cssText=`width:210mm;min-height:297mm;padding:20mm;background:${d?'#111':'white'};color:${d?'#ddd':'black'};font-family:Arial,sans-serif!important;`; const svg=`<svg style="display:none;"><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/></marker></defs></svg>`; w.innerHTML=`<style>*{box-sizing:border-box}img{max-width:100%;display:block;margin:10px auto}.occlusion-box{position:absolute;background:#000;border:1px solid red;z-index:10}.med-postit-note{background:#fef08a;padding:5px;border:1px solid #eab308;color:black;font-size:10pt;position:absolute}.med-arrow-wrapper{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}.oracle-response{border-left:3px solid #000;padding-left:10px;margin:15px 0;background:#f9f9f9;color:black}</style>${svg}${editorRef.current.innerHTML}`; await html2pdf().from(w).set({margin:0,filename:`MedNexus_${noteTitle}.pdf`,html2canvas:{scale:2,useCORS:true}}).save();}catch(e){console.error(e);} setIsExporting(false); };
+  const handleDownloadPDF = async () => {
+    if (!editorRef.current) return;
+    setIsExporting(true);
+    
+    try {
+        // 1. Kütüphaneyi çağır
+        const html2pdf = (await import('html2pdf.js')).default;
+        
+        // 2. Geçici bir kapsayıcı oluştur
+        const workerElement = document.createElement('div');
+        const isDark = mode === 'OBSERVATORY';
+        
+        // 3. PDF Sayfa Stili
+        workerElement.style.cssText = `
+            width: 210mm; 
+            min-height: 297mm; 
+            padding: 20mm; 
+            background: ${isDark ? '#111' : 'white'}; 
+            color: ${isDark ? '#ddd' : 'black'}; 
+            font-family: Arial, sans-serif !important;
+        `;
+
+        // 4. Ok Uçları için SVG Tanımı
+        const svgDefs = `<svg style="display: none;"><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" /></marker></defs></svg>`;
+        
+        // 5. İçerik ve CSS
+        workerElement.innerHTML = `
+            <style>
+                *{box-sizing:border-box}
+                img{max-width:100%;display:block;margin:10px auto}
+                .occlusion-box{position:absolute;background:#000;border:1px solid red;z-index:10}
+                .med-postit-note{background:#fef08a;padding:5px;border:1px solid #eab308;color:black;font-size:10pt;position:absolute}
+                .med-arrow-wrapper{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+                .oracle-response{border-left:3px solid #000;padding-left:10px;margin:15px 0;background:#f9f9f9;color:black}
+            </style>
+            ${svgDefs}
+            ${editorRef.current.innerHTML}
+        `;
+
+        // 6. Ayarlar (TypeScript'in takıldığı yer burasıydı)
+        const opt = {
+            margin: 0,
+            filename: `MedNexus_${noteTitle || 'Note'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // 7. 🔥 FIX: 'as any' ile TypeScript kontrolünü devre dışı bırakıyoruz.
+        await html2pdf().from(workerElement).set(opt as any).save();
+
+    } catch (e) {
+        console.error("PDF Export Hatası:", e);
+    }
+    
+    setIsExporting(false);
+  };
   const askOracle = async () => { if(!oracleInput)return; setIsThinking(true); try{const res=await fetch('/api/oracle',{method:'POST',body:JSON.stringify({prompt:oracleInput})});const d=await res.json();if(d.html&&editorRef.current){editorRef.current.focus();document.execCommand("insertHTML",false,`<div class="oracle-response">${d.html}</div><p><br/></p>`);saveToLocal();setIsOracleOpen(false);setOracleInput("");}}catch(e){alert("Oracle sessiz.");}setIsThinking(false); };
   const attachImageListeners = () => { if(!editorRef.current)return; editorRef.current.querySelectorAll('img').forEach(img=>{img.onclick=(e)=>{e.stopPropagation();setSelectedImage(img as HTMLImageElement);setImgScale(parseInt((img as HTMLImageElement).style.width||'100%'));}; (img as HTMLElement).style.pointerEvents='auto';}); };
   const updateImageSize = (v:number) => { if(selectedImage){selectedImage.style.width=`${v}%`;setImgScale(v);saveToLocal();} };
@@ -431,4 +487,5 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
       `}</style>
     </div>
   );
+
 }
