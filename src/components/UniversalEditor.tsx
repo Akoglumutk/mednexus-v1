@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { 
   FileUp, Save, Download, 
-  Bold, Italic, Underline, List, ImageIcon, X, Scissors, 
+  Bold, Italic, Underline, List, ListOrdered, ImageIcon, X, Scissors, 
   Sparkles, FileText, MousePointer2, Eye, EyeOff, Undo2, Timer, HelpCircle,
-  StickyNote, Highlighter, Heading1, Heading2, MoveUpRight, ZoomIn,
+  StickyNote, Highlighter, Heading1, Heading2, Heading3, MoveUpRight, ZoomIn,
   BookOpen, Edit3, ExternalLink 
 } from 'lucide-react';
 
@@ -341,7 +341,10 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
              <button onClick={() => applyStyle('underline')} className="tool-btn"><Underline size={14}/></button>
              <div className="sep"/>
              <button onClick={() => applyStyle('formatBlock', '<h1>')} className="tool-btn"><Heading1 size={14}/></button>
+             <button onClick={() => applyStyle('formatBlock', '<h2>')} className="tool-btn"><Heading2 size={14}/></button>
+             <button onClick={() => applyStyle('formatBlock', '<h3>')} className="tool-btn"><Heading3 size={14}/></button>
              <button onClick={() => applyStyle('insertUnorderedList')} className="tool-btn"><List size={14}/></button>
+             <button onClick={() => applyStyle('insertOrderedList')} className="tool-btn"><ListOrdered size={14}/></button>
              <div className="sep"/>
              <button onClick={() => addMedCode('#ef4444', 'SINAV')} className="tool-btn text-red-500 font-bold text-[10px]">#1</button>
              <button onClick={() => addMedCode('#3b82f6', 'HOCA')} className="tool-btn text-blue-500 font-bold text-[10px]">#2</button>
@@ -489,3 +492,4 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
   );
 
 }
+
