@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import NexusManager from "@/components/NexusManager";
 
 export default async function CortexPage() {
   const supabase = await createClient();
@@ -9,6 +10,7 @@ export default async function CortexPage() {
     redirect('/login');
   }
 
-  return <CortexClient />;
+  return <NexusManager moduleType="SCRIPTORIUM" />;
 
 }
+
