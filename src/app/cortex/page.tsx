@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import CortexClient from "./CortexClient";
 
 export default async function CortexPage() {
   const supabase = await createClient();
@@ -11,4 +10,5 @@ export default async function CortexPage() {
   }
 
   return <CortexClient />;
+
 }
