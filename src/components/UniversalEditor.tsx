@@ -436,7 +436,7 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
             onPointerUp={handlePointerUp}
             onInput={saveToLocal}
             onClick={attachImageListeners}
-            className={`editor-canvas shadow-2xl outline-none relative transition-all duration-300 ${mode === 'OBSERVATORY' ? 'bg-[#111] text-gray-300' : 'bg-white text-black'}`}
+            className={`editor-canvas p-4 shadow-2xl outline-none relative transition-all duration-300 ${mode === 'OBSERVATORY' ? 'bg-[#111] text-gray-300' : 'bg-white text-black'}`}
             style={{ 
                 cursor: activeTool === 'edit' ? 'text' : 'crosshair', 
                 userSelect: activeTool === 'edit' ? 'auto' : 'none',
@@ -452,7 +452,7 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
         
         .editor-canvas { 
             width: 100%; max-width: 210mm; min-height: 297mm; height: fit-content; 
-            padding: 20px md:20mm; font-family: 'Times New Roman', serif; 
+            padding: 20px md:20mm;
             font-size: 13pt; line-height: 1.6;
             box-shadow: 0 0 50px rgba(0,0,0,0.5); 
         }
@@ -492,4 +492,5 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
   );
 
 }
+
 
