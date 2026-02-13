@@ -451,11 +451,23 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
         .sep { @apply w-[1px] h-4 bg-white/10 mx-1 hidden md:block; }
         
         .editor-canvas { 
-            width: 100%; max-width: 210mm; min-height: 297mm; height: fit-content; 
-            padding: 20px md:20mm;
-            font-size: 13pt; line-height: 1.6;
+            width: 100%; 
+            max-width: 210mm; 
+            min-height: 297mm; 
+            height: fit-content; 
+            
+            /* DÜZELTME 1: PADDING */
+            padding: 40px; /* Yanlardan ve üstten ferah bir boşluk */
+            padding-bottom: 30vh; /* En alta geldiğinde metnin klavyenin veya ekranın altında ezilmemesi için devasa bir alt boşluk */
+            
+            /* DÜZELTME 2: FONT */
+            font-family: Arial, Helvetica, sans-serif !important; /* Times New Roman iptal, temiz Arial aktif */
+            
+            font-size: 13pt; 
+            line-height: 1.6;
             box-shadow: 0 0 50px rgba(0,0,0,0.5); 
         }
+
         .atlas-container { position: relative; display: inline-block; max-width: 100%; }
         
         /* SMART BOX (OCCLUSION) */
@@ -492,5 +504,6 @@ export default function UniversalEditor({ id, mode }: UniversalEditorProps) {
   );
 
 }
+
 
 
